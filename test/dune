@@ -1,0 +1,4 @@
+(executables
+(names maintest)
+(modules maintest)
+(libraries base))
