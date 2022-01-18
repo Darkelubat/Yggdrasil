@@ -1,2 +1,2 @@
 # Yggdrasil
-OCaml Parser
+Fiacre properties Parser, in OCaml
