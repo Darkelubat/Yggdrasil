@@ -3,7 +3,7 @@
 all:	test 
 
 test:
-	dune build test/maintest.exe
+	dune build test/maintest.exe test/basileus.exe
 	ln -fs _build/default/test/*.exe .
 
 clean:

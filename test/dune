@@ -4,3 +4,12 @@
  (modules maintest)
 
  (libraries base))
+
+
+
+(executables
+ 
+ (names basileus)
+ (modules basileus)
+
+ (libraries base reader))

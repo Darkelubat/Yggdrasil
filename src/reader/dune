@@ -1,0 +1,4 @@
+(library
+ (name reader)
+ (public_name yggdrasil.reader))
+
