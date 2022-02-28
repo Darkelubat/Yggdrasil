@@ -94,6 +94,7 @@ let go infile ignore outfile =
   
   let to_ignore = String.split_on_char ',' ignore in
   let to_ignore = List.map String.trim to_ignore in
+  let to_ignore = List.filter (fun s -> s <> "") to_ignore in
 
   let aut = Aut.read_aut infile in
   

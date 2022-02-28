@@ -18,7 +18,7 @@ let read_aut path =
   try
 
     (* First line *)
-    let (p,t) = Scanf.bscanf inch " des( %_d , %d , %d )\n" (fun p t -> (p,t)) in
+    let (t,p) = Scanf.bscanf inch " des( %_d , %d , %d )\n" (fun t p -> (t,p)) in
 
     let aut = { nb_places = p ;
                 nb_trans = t ;
@@ -40,13 +40,13 @@ let read_aut path =
     Scanf.Scanning.close_in inch ;
 
     let aut = mk_aut res.trans in
-    Printf.printf "\n  👍  File %s read : %d places, %d transitions.\n\n%!" path aut.nb_places aut.nb_trans ;
+    Printf.printf "\n  👍  File %s read : %d places, %d transitions.\n%!" path aut.nb_places aut.nb_trans ;
 
     if aut.nb_trans <> t  then
-      Printf.printf "  ⚠  The number of transitions specified in des(_,%d,_) does not match the number of transitions found in the file (%d).\n" t aut.nb_trans ;
+      Printf.printf "  ⚠  The number of transitions specified in des(_,_,%d) does not match the number of transitions found in the file (%d).\n" t aut.nb_trans ;
     
     if aut.nb_places <> p then
-      Printf.printf "  ⚠  The number of places specified in des(_,_,%d) does not match the number of placs found in the file (%d).\n" p aut.nb_places ;
+      Printf.printf "  ⚠  The number of places specified in des(_,%d,_) does not match the number of placs found in the file (%d).\n" p aut.nb_places ;
 
     aut
     
