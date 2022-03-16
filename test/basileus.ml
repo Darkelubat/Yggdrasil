@@ -103,9 +103,9 @@ let go infile ignore outfile =
 
   (* Pass 2 : copy transitions *)
   let arcs = copy_aut stats aut in
-  let result = Aut.mk_aut arcs in
+  let result = Aut.mk_aut aut.states arcs in
   
-  Aut.write_aut outfile result ;
+  Aut.write_aut AUT_SP2 outfile result ;
 
   (* Check all ignorable transitions are actually in the aut file. *)
   let unseen = List.filter (fun t -> not (Hashtbl.mem stats.removed_transitions t)) to_ignore in
