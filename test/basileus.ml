@@ -62,31 +62,41 @@ let get_stats to_ignore aut =
   
   stats
 
+type copy_acu =
+  { (* To avoid cycles *)
+    visited: int list ;
+    tr: arc list ;
+  }
 
 (* Copy trans (...,t,p2) to p1 
  * visited: list of places p1 already seen in the current recursion, to avoid cycles. *)
-let rec copy_trans visited st p1 t p2 acu =
+let rec copy_trans st p1 t p2 acu =
 
-  if List.mem p1 visited then
+  if List.mem p1 acu.visited then
     (* Cycle ! *)
     acu
       
   else
     (* t visible => p2 visible.  Record output transition of p1 if p1 is visible. *)
-    let acu = if Hashtbl.mem st.visible_places p1 then (p1,t,p2) :: acu else acu in
+    let acu = if Hashtbl.mem st.visible_places p1 then { acu with tr = (p1,t,p2) :: acu.tr } else acu in
 
     (* Copy upwards if needed. *)
     if Hashtbl.mem st.copy_to p1 then
       let dests = Hashtbl.find st.copy_to p1 in
-      List.fold_left (fun acu dest -> copy_trans (p1 :: visited) st dest t p2 acu) acu dests
+      let acu2 = { acu with visited = p1 :: acu.visited } in
+      List.fold_left (fun acu dest -> copy_trans st dest t p2 acu) acu2 dests
 
     else acu
 
-let insert_trans st acu (p1,t,p2) = if Hashtbl.mem st.removed_transitions t then acu else copy_trans [] st p1 t p2 acu
+let insert_trans st acu (p1,t,p2) = if Hashtbl.mem st.removed_transitions t then acu else copy_trans st p1 t p2 acu
 
-let copy_aut stats aut = List.fold_left (insert_trans stats) [] aut.trans
-  
+let start_acu =
+  { visited = [] ;
+    tr = [] }
 
+let copy_aut stats aut =
+  let acu = List.fold_left (insert_trans stats) start_acu aut.trans in
+  acu.tr
 
 let go infile ignore outfile =
 
@@ -97,14 +107,15 @@ let go infile ignore outfile =
   let to_ignore = List.filter (fun s -> s <> "") to_ignore in
 
   let aut = Aut.read_aut infile in
-  
+
   (* Pass 1 : record removed transitions *)
   let stats = get_stats to_ignore aut in
 
   (* Pass 2 : copy transitions *)
   let arcs = copy_aut stats aut in
+
   let result = Aut.mk_aut aut.states arcs in
-  
+
   Aut.write_aut AUT_SP2 outfile result ;
 
   (* Check all ignorable transitions are actually in the aut file. *)
