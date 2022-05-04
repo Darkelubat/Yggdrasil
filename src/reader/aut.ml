@@ -72,7 +72,7 @@ let read_aut path =
     Printf.printf "\n  👍  File %s read : %d places, %d transitions.\n%!" path aut.nb_places (List.length aut.trans) ;
 
     if aut.nb_places <> p then
-      Printf.printf "  ⚠  The number of places specified in des(_,%d,_) does not match the number of placs found in the file (%d).\n" p aut.nb_places ;
+      Printf.printf "  ⚠  The number of places specified in des(_,_,%d) does not match the number of places found in the file (%d).\n" p aut.nb_places ;
 
     aut
     
@@ -117,3 +117,13 @@ let write_aut format path aut =
   Printf.printf "\n  👌  File %s written : %d places, %d transitions.\n\n%!" path aut.nb_places n_trans ;
   ()
   
+let to_assoc aut =
+  let tbl = Assoc.create ~size:(120 * aut.nb_places / 100) ~init:(fun _ -> []) () in
+  List.iter (fun ((a,_,_) as arc) -> Assoc.update tbl a (fun l -> arc :: l)) aut.trans ;
+  tbl
+
+let get_state aut i =
+  match List.assoc_opt i aut.states with
+  | Some x -> x
+  | None -> ""
+    (* Printf.printf "\n  ❌  Error : state %d not found in automaton (Aut.get_state).\n\n%!" i ; assert false *)

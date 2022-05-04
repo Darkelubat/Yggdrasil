@@ -118,6 +118,10 @@ let go infile ignore outfile =
 
   let result = Aut.mk_aut aut.states arcs in
 
+  (* Determinize *)
+  let () = Printf.printf "\n  👋  Determinizing result automaton (which has %d transitions).\n%!" (List.length aut.trans) in
+  let result = Det.det result in
+
   Aut.write_aut AUT_SP2 outfile result ;
 
   (* Check all ignorable transitions are actually in the aut file. *)
@@ -137,7 +141,4 @@ let () =
     Printf.printf "         - Removes the specified transitions i1, i2, ... , by upmoving or copying visible transitions if needed.\n" ;
     Printf.printf "         - Writes the result in outfile (.aut).\n\n" ;
     ()
-
-
-    
-         
+      

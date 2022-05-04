@@ -18,7 +18,7 @@ type aut =
 
 val read_aut: path -> aut
 
-(* Builds a aut structure given only the arc list and states. *)
+(* Builds a aut structure given only the arc list and states (find the max number of place) *)
 val mk_aut: (int * state) list -> arc list -> aut
 
 (* TODO : remove dead places ? *)
@@ -27,3 +27,6 @@ type format = AUT | AUT_SP2
 
 val write_aut: format -> path -> aut -> unit
   
+val to_assoc: aut -> (int, arc list) Assoc.t 
+
+val get_state: aut -> int -> state
