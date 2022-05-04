@@ -62,9 +62,9 @@ type pw_acu =
 
 let pows2s p = "{ " ^  sep string_of_int ", " (S.elements p) ^ " }"
 
-let info2s i = Printf.sprintf "( id = %d, %d arcs)" i.id (List.length i.outs)
+let info2s i = Printf.sprintf "( id = %d, %d arcs : %s )" i.id (List.length i.outs) (sep (fun (a,s,b) -> Printf.sprintf "%s --%s--> %s" (pows2s a) s (pows2s b)) ", " i.outs)
 
-let pw2s pw_acu = M.fold (fun pow_s info acu -> acu ^ pows2s pow_s ^ "  -->  " ^ info2s info ^ "\n") pw_acu.mm ""
+let pw2s pw_acu = M.fold (fun pow_s info acu -> acu ^ "   " ^ pows2s pow_s ^ "  -->  " ^ info2s info ^ "\n") pw_acu.mm ""
   
 (* Build the out arcs of set pw_s *)
 let out_arcs ass (pw_s:pow_s) =
@@ -142,7 +142,7 @@ let det aut =
   let ass = to_assoc aut in
   let res = build ass init_pwacu single_0 in
 
-  let _f () = Printf.printf "Result : \n%s\n\n%!" (pw2s res) in
+  let () = Printf.printf "\n Result : \n%s\n\n%!" (pw2s res) in
   
   (* Build the resulting automaton *)
 
