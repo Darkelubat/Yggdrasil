@@ -142,7 +142,7 @@ let det aut =
   let ass = to_assoc aut in
   let res = build ass init_pwacu single_0 in
 
-  let () = Printf.printf "\n Result : \n%s\n\n%!" (pw2s res) in
+  let _f() = Printf.printf "\n Result : \n%s\n\n%!" (pw2s res) in
   
   (* Build the resulting automaton *)
 
