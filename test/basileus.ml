@@ -13,8 +13,8 @@ type stats =
     (* Places that have a visible input transition or no input transition at all (init state). *)
     visible_places: (int, unit) Hashtbl.t ;
 
-    (* For each place p2, indicate to which places p1,... their output arcs should be copied
-       (because there is a removable transition from p1 to p2). *)
+    (* For each place p2, indicate to which places p1,... its output arcs should be copied
+       (because there is a removable transition from p1 to p2, hence the outputs of p2 become the outputs of p1). *)
     copy_to: (int, int list) Hashtbl.t }
 
 
@@ -63,13 +63,14 @@ let get_stats to_ignore aut =
   stats
 
 type copy_acu =
-  { (* To avoid cycles *)
+  { (* visited: list of places p1 already seen in the current recursion, to avoid cycles. *)
     visited: int list ;
+
+    (* Result being built. *)
     tr: arc list ;
   }
 
-(* Copy trans (...,t,p2) to p1 
- * visited: list of places p1 already seen in the current recursion, to avoid cycles. *)
+(* Copy trans (...,t,p2) to p1, and to parent places if needed (according to copy_to). *)
 let rec copy_trans st p1 t p2 acu =
 
   if List.mem p1 acu.visited then
@@ -88,13 +89,14 @@ let rec copy_trans st p1 t p2 acu =
 
     else acu
 
-let insert_trans st acu (p1,t,p2) = if Hashtbl.mem st.removed_transitions t then acu else copy_trans st p1 t p2 acu
+(* visited is reset for each new transition t *)
+let insert_trans st acu (p1,t,p2) = if Hashtbl.mem st.removed_transitions t then acu else copy_trans st p1 t p2 { acu with visited = [] }
 
 let start_acu =
   { visited = [] ;
     tr = [] }
 
-let copy_aut stats aut =
+let copy_arcs stats aut =
   let acu = List.fold_left (insert_trans stats) start_acu aut.trans in
   acu.tr
 
@@ -112,7 +114,7 @@ let go infile ignore outfile =
   let stats = get_stats to_ignore aut in
 
   (* Pass 2 : copy transitions *)
-  let arcs = copy_aut stats aut in
+  let arcs = copy_arcs stats aut in
 
   let result = Aut.mk_aut aut.states arcs in
 
