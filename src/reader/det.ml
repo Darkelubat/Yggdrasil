@@ -134,7 +134,7 @@ let mk_arc pw_acu id (pw_1, lbl, pw_2) =
   (id, lbl, id2)
 
 let mk_state aut (pw_s, info) =
-  let state = S.fold (fun i acu -> let st = get_state aut i in if acu = "" then st else acu ^ " " ^ st) pw_s "" in
+  let state = S.fold (fun i acu -> let st = get_state aut i in if acu = "" then st else acu ^ " ; " ^ st) pw_s "" in
   (info.id, state)
 
 let det aut =
